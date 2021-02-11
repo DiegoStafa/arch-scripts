@@ -1,0 +1,8 @@
+#! /bin/bash
+
+if test "$1" = "";
+then
+		echo "blur <input> <output>"
+else
+		convert $1 -level "0%,100%,0.6" -filter Gaussian -resize 20% -define "filter:sigma=1.5" -resize 500.5% -gravity center $2
+fi

@@ -1,0 +1,28 @@
+#! /bin/bash
+
+list_path="/tmp/minim_list"
+
+IFS=$'\n' read -d '' -r -a IDs < $list_path
+
+if test "${#IDs[@]}" != "0";
+then
+	if test "$1" = "-pop";
+	then
+		lastrow=$(tail -1 $list_path)
+		xdotool windowmap $lastrow
+		head -n -1 $list_path > /tmp/minim_list.tmp ; mv /tmp/minim_list.tmp $list_path
+	else
+		for index in "${!IDs[@]}";
+		do
+			names[$index]=$(xdotool getwindowname ${IDs[$index]})
+		done
+
+		sel_index="$( printf '%s\n' "${names[@]}" | rofi -dmenu -p "" -i -format i -location 7 -width 25 -lines 8 -yoffset -20 -bw 0)"
+
+		if test "$sel_index" != "";
+		then
+			xdotool windowmap ${IDs[$sel_index]}
+			sed -i "/${IDs[$sel_index]}/d" $list_path
+		fi
+	fi
+fi

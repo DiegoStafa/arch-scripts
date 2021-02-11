@@ -1,0 +1,85 @@
+#! /bin/bash
+
+scr_dir="$HOME/images/screenshots"
+rec_dir="$HOME/videos/records"
+gif_dir="$HOME/videos/gifs"
+cam_dir="$HOME/videos/webcam"
+
+name="$(date +%s)"
+display_size="1366x768"
+
+rofi_options="Capture window|Capture region|Delayed capture (5s)|Record screen|Record screen (+audio)|Record region|Gif (15s max)|Record webcam"
+rofi_lines=8
+
+if [ "$1" != "-menu" ];
+then
+	maim -u -f png -m 2 $scr_dir/$name.png
+	notify-send "$name.png saved in ~/images/screenshots"
+else
+	if pidof ffmpeg;
+	then
+		rofi_options="${rofi_options}|Stop Recording"
+		rofi_lines=9
+	fi
+
+	MENU="$(rofi -sep "|" -dmenu -i -format d -p "Capture Tools" -columns 2 -lines $rofi_lines -width 15 <<< $rofi_options)"
+	case "$MENU" in
+		1)	
+			maim -u -f png -m 2 -i $(xdotool getactivewindow) $scr_dir/$name.png
+			notify-send "$name.png saved in ~/images/screenshots"
+			;;
+		2)		
+			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
+			if [ "$X" != "" ];
+			then
+				maim -u -f png -m 1 -g ${W}x${H}+${X}+${Y} $scr_dir/$name.png
+				notify-send "$name.png saved in ~/images/screenshots"
+			else
+				notify-send "Aborted"
+			fi
+			;;
+		3)		
+			maim -u -f png -m 2 -d 5 $scr_dir/$name.png
+			notify-send "$name.png saved in ~/images/screenshots"
+			;;
+		4)
+			ffmpeg -f x11grab -video_size $display_size -framerate 30 -i $DISPLAY $rec_dir/$name.mp4
+			notify-send "$name.mp4 saved in ~/videos/records"
+			;;
+		5)	
+			#ffmpeg -video_size 1366x768 -f x11grab -i :0.0 -f pulse -i 0 -f pulse -i default -filter_complex amerge -ac 2 -preset veryfast $rec_dir/$name.mkv
+			ffmpeg -f x11grab -video_size $display_size -framerate 30 -i $DISPLAY -f pulse -i 0  -preset ultrafast -threads 0 $rec_dir/$name.mp4
+			notify-send "$name.mp4 saved in ~/videos/records"
+			;;
+		6) 
+			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
+			if [ "$X" != "" ];
+			then
+				ffmpeg -f x11grab -video_size ${W}x${H} -framerate 30 -i $DISPLAY+${X},${Y} $rec_dir/$name.mp4
+				notify-send "$name.mp4 saved in ~/videos/records"
+			else
+				notify-send "Aborted"
+			fi
+			;;
+		7)
+			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
+			if [ "$X" != "" ];
+			then
+				ffmpeg -f x11grab -video_size ${W}x${H} -framerate 25 -draw_mouse 0 -i $DISPLAY+${X},${Y} -t 15 $rec_dir/$name.mp4
+				ffmpeg -i $rec_dir/$name.mp4 -vf "fps=5,scale=iw*0.7:ih*0.7:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 $gif_dir/$name.gif
+				notify-send "$name.gif saved in ~/videos/gifs"
+				rm $rec_dir/$name.mp4
+			else
+				notify-send "Aborted"
+			fi
+			;;
+		8)
+			ffmpeg -f v4l2 -framerate 30 -video_size 640x480 -i /dev/video0 $cam_dir/$name.mkv -pix_fmt yuv420p -an -f sdl2 "Webcam preview"
+			notify-send "$name.mkv saved in ~/videos/webcam"
+			;;
+
+		9)
+			killall ffmpeg ;;
+
+		esac
+fi

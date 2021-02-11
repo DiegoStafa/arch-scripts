@@ -1,0 +1,22 @@
+#! /bin/bash
+
+MENU="$(rofi -sep "|" -dmenu -i -p "Kill" -width 15 -lines 3 -columns 4 <<< "1|2|3|4|5|6|7|8|9|10|Floating|All")"
+
+if test "$MENU" != "";
+then
+	confirm="$(rofi -sep "|" -dmenu -i -p "Confirm" -lines 1 -columns 2 -width 15 <<< "No|Yes")"
+	if test "$confirm" = "Yes";
+	then
+		case "$MENU" in
+			[0-9] | "10")
+				i3-msg "[class=\"^.*\"] [workspace="$MENU"] kill"
+				;;
+			"Floating")
+				i3-msg "[floating] kill"
+				;;
+			"All")
+				i3-msg "[class=\"^.*\"] kill"
+				;;
+		esac
+	fi
+fi

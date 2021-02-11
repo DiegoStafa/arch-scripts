@@ -1,0 +1,8 @@
+#! /bin/bash
+
+if test "$1" = "";
+then
+		echo "videocut <input> <start> <duration> <output>"
+else
+		ffmpeg -ss $2 -i $1 -t $3 -c:a aac -strict experimental $4
+fi

@@ -1,0 +1,11 @@
+#!/bin/bash
+
+MENU="$(rofi -sep "|" -dmenu -i -p '' -yoffset -20 -location 5 -lines 6 -width 10 -bw 0 <<< "Lock|Suspend|Hibernate|Logout|Reboot|Shutdown")"
+case "$MENU" in
+	*Lock) $HOME/scripts/lock ;;
+	*Suspend) $HOME/scripts/lock && systemctl suspend ;;
+	*Hibernate) $HOME/scripts/lock && systemctl hibernate ;;
+	*Logout) i3-msg exit ;;
+	*Reboot) systemctl reboot ;;
+	*Shutdown) systemctl poweroff -i
+esac

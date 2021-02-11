@@ -1,0 +1,25 @@
+#! /bin/bash
+
+website="/home/diego/projects/diego++/"
+index="${website}index.html"
+
+head="${website}html/head.html"
+sidebar="${website}html/sidebar.html"
+header="${website}html/header.html"
+main="${website}html/main.html"
+footer="${website}html/footer.html"
+
+# flush before appending everything
+>  $index
+
+echo '<!DOCTYPE html>'          >> $index
+echo ''                         >> $index
+echo '<html lang="en">'         >> $index
+cat  	$head                   >> $index
+echo '<body>'                   >> $index
+cat  	$sidebar                >> $index
+cat  	$header                 >> $index
+cat  	$main                   >> $index
+cat  	$footer                 >> $index
+echo '</body>'                  >> $index
+echo '</html>'                  >> $index

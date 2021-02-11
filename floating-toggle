@@ -1,0 +1,12 @@
+#! /bin/bash
+
+if ! i3-msg "[title=\"$1\"] scratchpad show";
+then
+	if test "$1" != "terminal";
+	then
+		i3-msg "exec --no-startup-id \"alacritty -t $1 --class _scratchpad -e $@\""
+	else
+		i3-msg "exec --no-startup-id \"alacritty -t $1 --class _scratchpad\""
+	fi
+fi
+

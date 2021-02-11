@@ -1,0 +1,10 @@
+#! /bin/bash
+
+bar_name="polybar-mybar_eDP1"
+bar_status=$(xwininfo -name $bar_name | grep "Map State")
+
+if [[ "$bar_status" == *"IsViewable"* ]]; then 
+	xdo hide -a $bar_name
+else
+	xdo show -a $bar_name
+fi

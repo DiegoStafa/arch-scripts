@@ -1,0 +1,51 @@
+#! /bin/bash
+
+if test "$1" != "";
+then
+
+		destination="post/$(echo $1 | cut -d "/" -f3)"	
+		file="${destination}/$(date +%Y-%m-%d)-${2}.html"
+
+		prepend='/home/diego/projects/diego++/post/prepend'
+		append='/home/diego/projects/diego++/post/append'
+
+		> $file
+		
+		cat $prepend 					>> $file
+		echo "<li>"   					>> $file
+		echo 	"$3" 					>> $file
+		echo "</li>"					>> $file
+		echo "<li>"						>> $file
+		echo 	"$4"					>> $file
+		echo "</li>"					>> $file
+		echo "<li>"						>> $file
+		echo 	"$(date +%d-%m-%Y)"		>> $file
+		echo "</li>"					>> $file
+		echo "</ul>"					>> $file
+		echo "<div class=\"post\">"		>> $file
+		marked $1						>> $file
+		cat $append 					>> $file
+
+		### ---- main post output -----
+
+		article="<article>
+		   <div class=\"box-title\">
+			   <div>
+				   <a href=\"${file}\">
+				   $3
+				   </a>
+			   </div>
+		   </div>
+		   <div class=\"box-info\">
+			   <div class=\"box-left\">$4</div>
+			   <div class=\"box-right\">$(date +%d-%m-%Y)</div>
+		   </div>
+</article>"
+
+		echo "$article" | xclip -selection c
+		echo "<article> copiato in clipboard"
+else
+		echo "in ./"
+		echo "makepost <input> <filename> <titolo> <sezione>"
+fi
+

@@ -1,0 +1,58 @@
+#! /bin/bash
+
+# $X $Y $WIDTH $HEIGHT $SCREEN $WINDOW
+# $1 --> screen corner
+
+#  +-----------------+
+#  |7       8       9|	
+#  |                 |
+#  |4       5       6|
+#  |                 |
+#  |1       2       3|
+#  +=================+ <-- polybar
+
+
+eval $(xdotool getactivewindow getwindowgeometry --shell)
+
+BORDER_SIZE=$(xwininfo -id $(xdotool getactivewindow) | grep "Relative upper-left X" | awk '{ print $4 }')
+TITLEBAR_SIZE=18
+
+SCR_WIDTH=1366
+H_SCR_WIDTH=683
+SCR_HEIGHT=748 # 768px - 20px (polybar)
+H_SCR_HEIGHT=374
+
+HEIGHT=$(( $HEIGHT + 18 )) # 18px titlebar
+
+H_WIDTH=$(( $WIDTH / 2 ))
+H_HEIGHT=$(( $HEIGHT / 2 ))
+
+
+left=$BORDER_SIZE
+center_w=$(( $H_SCR_WIDTH - $H_WIDTH))
+right=$(( $SCR_WIDTH - $WIDTH - $BORDER_SIZE ))
+
+top=$(( $BORDER_SIZE + $TITLEBAR_SIZE ))
+center_h=$(( $H_SCR_HEIGHT - $H_HEIGHT + $TITLEBAR_SIZE ))
+bottom=$(( $SCR_HEIGHT - $HEIGHT - $BORDER_SIZE + $TITLEBAR_SIZE))
+
+case "$1" in
+		1) xdotool getactivewindow windowmove $left $bottom; 
+				;;
+		2) xdotool getactivewindow windowmove $center_w $bottom
+				;;
+		3) xdotool getactivewindow windowmove $right $bottom
+				;;
+		4) xdotool getactivewindow windowmove $left $center_h
+				;;
+		5) xdotool getactivewindow windowmove $center_w $center_h
+				;;
+		6) xdotool getactivewindow windowmove $right $center_h
+				;;
+		7) xdotool getactivewindow windowmove $left $top
+				;;
+		8) xdotool getactivewindow windowmove $center_w $top
+				;;
+		9) xdotool getactivewindow windowmove $right $top
+				;;
+esac

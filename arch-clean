@@ -1,0 +1,18 @@
+#! /bin/bash
+
+echo "ORPHAN PACKAGES"
+sudo pacman -Rns $(pacman -Qtdq)
+
+echo ""
+echo "PACMAN CACHE"
+sudo pacman -Scc
+
+echo ""
+echo "USER CACHE"
+
+read -p 'do you want to remove "~/.cache/*"? (y/n)' -n 1 -r
+if [[ $REPLY = "y" ]]
+then
+		rm -rf ~/.cache/*
+		echo "...removed"
+fi
