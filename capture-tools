@@ -32,7 +32,7 @@ else
 			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
 			if [ "$X" != "" ];
 			then
-				maim -u -f png -m 1 -g ${W}x${H}+${X}+${Y} $scr_dir/$name.png
+				maim -u -f png -m 2 -g ${W}x${H}+${X}+${Y} $scr_dir/$name.png
 				notify-send "$name.png saved in ~/images/screenshots"
 			else
 				notify-send "Aborted"
@@ -65,8 +65,8 @@ else
 			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
 			if [ "$X" != "" ];
 			then
-				ffmpeg -f x11grab -video_size ${W}x${H} -framerate 25 -draw_mouse 0 -i $DISPLAY+${X},${Y} -t 15 $rec_dir/$name.mp4
-				ffmpeg -i $rec_dir/$name.mp4 -vf "fps=5,scale=iw*0.7:ih*0.7:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 $gif_dir/$name.gif
+				ffmpeg -f x11grab -video_size ${W}x${H} -framerate 30 -draw_mouse 0 -i $DISPLAY+${X},${Y} -t 15 $rec_dir/$name.mp4
+				ffmpeg -i $rec_dir/$name.mp4 -vf "fps=10,scale=iw*0.6:ih*0.6:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" -loop 0 $gif_dir/$name.gif
 				notify-send "$name.gif saved in ~/videos/gifs"
 				rm $rec_dir/$name.mp4
 			else

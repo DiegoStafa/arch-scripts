@@ -1,5 +1,0 @@
-#! /bin/bash
-
-window_id=$(xdotool getactivewindow) && \
-echo $window_id >> /tmp/minim_list && \
-xdotool windowunmap $window_id

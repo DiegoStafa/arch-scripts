@@ -5,7 +5,7 @@ then
 	echo "addd <filename> <entryname> <cmd>"
 else
 
-	desktop_file="$HOME/.local/share/applications/${1}.desktop"
+	desktop_file="$HOME/.local/share/applications/user-app/${1}.desktop"
 
 	touch $desktop_file
 	> $desktop_file
