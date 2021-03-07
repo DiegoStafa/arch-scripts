@@ -1,0 +1,21 @@
+#! /bin/bash
+
+# $1 --> program
+
+pid=$(pidof -s $1)
+
+if test "$pid" != "";
+then
+
+	# get wid from pid or program
+	wid=$(xdotool search --any --pid $pid --name $1)
+	display_status=$(xwininfo -id $wid | grep "Map State")
+	if [[ "$display_status" == *"IsViewable"* ]]; then
+		xdotool windowunmap $wid
+	else
+		xdotool windowmap $wid
+	fi
+
+else
+	exec $1
+fi

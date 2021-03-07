@@ -1,0 +1,9 @@
+#! /bin/bash
+
+display_status=$(xwininfo -name $1 | grep "Map State")
+
+if [[ "$display_status" == *"IsViewable"* ]]; then 
+	xdo hide -a $1
+else
+	xdo show -a $1
+fi
