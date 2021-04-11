@@ -1,0 +1,13 @@
+#! /bin/bash
+
+location="Cavarzere"
+out=$(curl -s "wttr.in/${location}?format=%l:+%t+%h")
+
+if [[ "$out" == *"$location"* ]]; then
+	echo $out
+else
+	echo ". . ."
+fi
+
+
+

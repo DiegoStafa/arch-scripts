@@ -3,5 +3,10 @@
 query=$(rofi -dmenu -p '' -lines 0)
 if test "$query" != "";
 then
-	chromium "https://www.google.com/search?q=$query"
+	if test "$1" != "-img";
+	then
+		chromium "https://www.google.com/search?q=$query"
+	else
+		chromium "https://www.google.com/search?q=$query&tbm=isch"
+	fi
 fi

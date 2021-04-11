@@ -1,7 +1,5 @@
 #! /bin/bash
 
-window_id=$(xdotool getactivewindow) && \
-echo $window_id >> /tmp/xhide_list && \
+window_id=$(xdotool getactivewindow) && echo $window_id >> /tmp/xhide_list && echo $window_id
 #xdotool windowminimize $window_id
 xdotool windowunmap $window_id
-

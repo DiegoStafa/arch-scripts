@@ -1,0 +1,30 @@
+#! /bin/bash
+
+ws=(1 2 3 4 5 6 7 8 9 10)
+act_ws=($( i3-msg -t get_workspaces | jq | grep num | sed -e 's/"num": //' -e 's/,//' ))
+
+
+for i in  $( seq 0 $(( ${#act_ws[@]}-1 )))
+do
+	ws[${act_ws[$i]}-1]="${act_ws[$i]} - active"
+done
+
+if test "$1" = "-next";
+then
+	for i in  $( seq 0 $(( ${#ws[@]}-1 )))
+	do
+		if ! grep "active" <<< ${ws[$i]};
+		then
+			i3-msg "workspace $(( $i+1 ))"
+			break
+		fi
+	done
+else
+	rofi_ws=$(IFS=\| ; echo "${ws[*]}")
+	MENU="$(echo $rofi_ws | rofi -sep "|" -dmenu -i -p "go to" -format d -bw 0 -lines 5 -columns 2 -width 25 )"
+	if test "$MENU" != "";
+	then
+		i3-msg "workspace $MENU"
+	fi
+
+fi

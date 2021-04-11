@@ -1,0 +1,20 @@
+#! /bin/bash
+
+# needs: xdo xdotool wmctrl
+
+act_win=$(xdo id)
+if test "$act_win" = "";
+then
+	act_win=$(wmctrl -l | head -1 | awk '{print $1;}')
+fi
+
+echo "currently: $act_win"
+
+if test "$1" = "-next";
+then
+	next_w=$(wmctrl -l | grep -i -A1 $act_win | tail -n1 | awk '{print $1;}')
+	xdotool windowfocus "$next_w"
+else
+	prev_w=$(wmctrl -l | grep -i -B1 $act_win | head -n1 | awk '{print $1;}')
+	xdotool windowfocus "$prev_w"
+fi

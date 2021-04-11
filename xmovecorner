@@ -1,9 +1,14 @@
 #! /bin/bash
 
-# $X $Y $WIDTH $HEIGHT $SCREEN $WINDOW
-# $1 --> screen corner
+# $1 		--> corner number
+# $X		--> window X coordinate 
+# $Y 		--> window Y coordinate
+# $WIDTH	--> window width
+# $HEIGHT	--> window height
+# $SCREEN	--> screen number
+# $WINDOW	--> window id
 
-#  +-----------------+
+#  +=================+ <-- tint2 bar
 #  |7       8       9|	
 #  |                 |
 #  |4       5       6|
@@ -11,28 +16,39 @@
 #  |1       2       3|
 #  +=================+ <-- polybar
 
+if test "$(xwininfo -name tint | grep "Map State" | awk '{ print $3 }')" != "IsViewable";
+then
+	tint_h=0
+else
+	tint_h=20
+fi
+if test "$(xwininfo -name "polybar_mob" | grep "Map State" | awk '{ print $3 }')" != "IsViewable";
+then
+	polybar_h=0
+else
+	polybar_h=20
+fi
+
 
 eval $(xdotool getactivewindow getwindowgeometry --shell)
 
-BORDER_SIZE=$(xwininfo -id $(xdotool getactivewindow) | grep "Relative upper-left X" | awk '{ print $4 }')
-TITLEBAR_SIZE=18
+win_border=$(xwininfo -id $WINDOW | grep "Relative upper-left X" | awk '{ print $4 }')
+h_win_w=$(( $WIDTH / 2 ))
+h_win_h=$(( $HEIGHT / 2 ))
 
-SCR_WIDTH=1366
-H_SCR_WIDTH=683
-SCR_HEIGHT=748 # 768px - 20px (polybar)
-H_SCR_HEIGHT=374
+screen_w=$(xdpyinfo | grep dimensions | awk ' { print $2; }' | tr "x" "\n" | head -n1)
+screen_h=$(xdpyinfo | grep dimensions | awk ' { print $2; }' | tr "x" "\n" | tail -n1)
 
-H_WIDTH=$(( $WIDTH / 2 ))
-H_HEIGHT=$(( $HEIGHT / 2 ))
+h_screen_w=$(( $screen_w / 2 ))
+h_screen_h=$(( $screen_h / 2 ))
 
+left=$win_border
+center_w=$(( $h_screen_w - $h_win_w))
+right=$(( $screen_w - $WIDTH - $win_border ))
 
-left=$BORDER_SIZE
-center_w=$(( $H_SCR_WIDTH - $H_WIDTH))
-right=$(( $SCR_WIDTH - $WIDTH - $BORDER_SIZE ))
-
-top=$BORDER_SIZE
-center_h=$(( $H_SCR_HEIGHT - $H_HEIGHT ))
-bottom=$(( $SCR_HEIGHT - $HEIGHT - $BORDER_SIZE ))
+top=$(( $win_border + $tint_h ))
+center_h=$(( $h_screen_h - $h_win_h ))
+bottom=$(( $screen_h - $HEIGHT - $win_border - $polybar_h ))
 
 case "$1" in
 		1) xdotool getactivewindow windowmove $left $bottom; 

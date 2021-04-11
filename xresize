@@ -1,0 +1,39 @@
+#! /bin/bash
+
+if test "$(xwininfo -name tint | grep "Map State" | awk '{ print $3 }')" != "IsViewable";
+then
+	tint_h=0
+else
+	tint_h=20
+fi
+if test "$(xwininfo -name "polybar_mob" | grep "Map State" | awk '{ print $3 }')" != "IsViewable";
+then
+	polybar_h=0
+else
+	polybar_h=20
+fi
+
+win=$(xdotool getactivewindow)
+w=$(xwininfo -id $win | grep "Width" | awk '{print $2}')
+h=$(xwininfo -id $win | grep "Height" | awk '{print $2}')
+
+win_border=$(xwininfo -id $win | grep "Relative upper-left X" | awk '{ print $4 }')
+
+
+screen_w=$(( $(xdpyinfo | grep dimensions | awk ' { print $2; }' | tr "x" "\n" | head -n1) - 2*$win_border ))
+screen_h=$(( $(xdpyinfo | grep dimensions | awk ' { print $2; }' | tr "x" "\n" | tail -n1) - 2*$win_border - $tint_h - $polybar_h ))
+
+
+h_screen_w=$(( $screen_w / 2 ))
+h_screen_h=$(( $screen_h / 2 ))
+
+case "$1" in
+	"-w") xdotool windowsize $win $screen_w $h ;;
+	"-h") xdotool windowsize  $win $w $screen_h ;;
+	"-hfill") xdotool windowsize $win $h_screen_w $h_screen_h ;;
+	"-hw") xdotool windowsize $win $h_screen_w $h ;;
+	"-hh") xdotool windowsize $win $w $h_screen_h ;;
+	"-fill") xdotool windowsize $win $screen_w $screen_h ;;
+esac
+
+/home/diego/scripts/xmovecorner 5

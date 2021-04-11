@@ -1,21 +1,21 @@
 #! /bin/bash
 
-# $1 --> program
+toggle_list=/tmp/xtoggle_list
 
-pid=$(pidof -s $1)
+# $1 --> name
 
-if test "$pid" != "";
+wid=$(wmctrl -lx | grep -i $1 | awk '{ print $1 }')
+echo $wid
+
+if [ "$?" != "0" ];
 then
-
-	# get wid from pid or program
-	wid=$(xdotool search --any --pid $pid --name $1)
-	display_status=$(xwininfo -id $wid | grep "Map State")
-	if [[ "$display_status" == *"IsViewable"* ]]; then
+	exec $1
+else
+	status=$(xwininfo -id $wid | grep "Map State")
+	if [[ "$status" == *"IsViewable"* ]];
+	then
 		xdotool windowunmap $wid
 	else
 		xdotool windowmap $wid
 	fi
-
-else
-	exec $1
 fi

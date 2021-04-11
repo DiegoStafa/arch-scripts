@@ -1,0 +1,13 @@
+#! /bin/bash
+
+conf="/home/diego/.config/alacritty/alacritty.yml"
+colors="/home/diego/.config/alacritty/colorschemes"
+file="$(ls $colors | shuf -n1)"
+
+rem=$(cat "$conf" | sed '/colors:/q' | sed '/colors:/d')
+
+echo "$rem" > $conf
+cat "$colors/$file" >> $conf
+
+
+echo "colorscheme: $file"

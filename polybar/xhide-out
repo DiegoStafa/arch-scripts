@@ -1,0 +1,68 @@
+#!/bin/bash
+
+list_path="/tmp/xhide_list"
+sep=" - "
+sep_color="#fb4934"
+sep="%{F$sep_color}$sep%{F-}"
+
+char_limit=16
+
+raise_or_minimize() {
+	xdotool windowmap $1
+	sed -i "/$1/d" $list_path
+}
+
+close() {
+	xdotool windowclose $1
+	sed -i "/$1/d" $list_path
+}
+
+
+generate_window_list() {
+    
+    on_click="$0"
+    n_wid=$(wc -l < $list_path)
+    IFS=$'\n' read -d '' -r -a IDs < $list_path
+    for (( i=0; i<$n_wid; i++ ))
+    do
+        wid=${IDs[$i]}
+        
+		w_name=$(xdotool getwindowname $wid)
+		
+		if [ "$?" != "0" ];
+		then	
+			sed -i "/$wid/d" $list_path
+		fi
+	
+		if [ "${#w_name}" -gt "$char_limit" ]; then
+			w_name="$(echo "$w_name" | cut -c1-$((char_limit-1)))..."
+		fi
+
+        # Add on-click action Polybar formatting
+	    printf "%s" "%{A1:$on_click raise_or_minimize $wid:}"
+	    printf "%s" "%{A3:$on_click close $wid:}"
+        
+	    # Print the final window name
+        printf "%s" "$w_name"
+	    printf "%s" "%{A}%{A}"
+
+        if [ "$i" != "$(( $n_wid - 1))" ]; then
+			printf "%s" "$sep"
+		fi
+    done
+	if [ "$n_wid" = "0" ];
+	then
+		echo " "
+	fi
+
+}
+main() {
+	if [ -z "$2" ]; then
+		generate_window_list
+	else
+		"$@"
+	fi
+}
+
+
+main "$@"

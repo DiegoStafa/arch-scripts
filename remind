@@ -1,0 +1,3 @@
+#! /bin/bash
+
+sleep ${@:$#}; notify-send -t 0 "${*%${!#}}" 

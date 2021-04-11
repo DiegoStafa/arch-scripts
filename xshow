@@ -18,7 +18,7 @@ then
 			names[$index]=$(xdotool getwindowname ${IDs[$index]})
 		done
 
-		sel_index="$( printf '%s\n' "${names[@]}" | rofi -dmenu -p "Show" -i -format i -location 7 -width 25 -lines 8 -yoffset -20 -bw 0)"
+		sel_index="$( printf '%s\n' "${names[@]}" | rofi -dmenu -p "Show" -i -format i -width 25)"
 
 		if test "$sel_index" != "";
 		then

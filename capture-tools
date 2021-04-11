@@ -6,7 +6,7 @@ gif_dir="$HOME/videos/gifs"
 cam_dir="$HOME/videos/webcam"
 
 name="$(date +%s)"
-display_size="1366x768"
+display_size=$(xdpyinfo | grep dimensions | awk ' { print $2; }')
 
 rofi_options="Capture window|Capture region|Delayed capture (5s)|Record screen|Record screen (+audio)|Record region|Gif (15s max)|Record webcam"
 rofi_lines=8
@@ -29,7 +29,7 @@ else
 			notify-send "$name.png saved in ~/images/screenshots"
 			;;
 		2)		
-			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
+			read -r X Y W H < <(slop -q -b 1 -f "%x %y %w %h")
 			if [ "$X" != "" ];
 			then
 				maim -u -f png -m 2 -g ${W}x${H}+${X}+${Y} $scr_dir/$name.png
@@ -52,7 +52,7 @@ else
 			notify-send "$name.mp4 saved in ~/videos/records"
 			;;
 		6) 
-			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
+			read -r X Y W H < <(slop -q -b 1 -f "%x %y %w %h")
 			if [ "$X" != "" ];
 			then
 				ffmpeg -f x11grab -video_size ${W}x${H} -framerate 30 -i $DISPLAY+${X},${Y} $rec_dir/$name.mp4
@@ -62,7 +62,7 @@ else
 			fi
 			;;
 		7)
-			read -r X Y W H < <(slop -q -b 3 -f "%x %y %w %h")
+			read -r X Y W H < <(slop -q -b 1 -f "%x %y %w %h")
 			if [ "$X" != "" ];
 			then
 				ffmpeg -f x11grab -video_size ${W}x${H} -framerate 30 -draw_mouse 0 -i $DISPLAY+${X},${Y} -t 15 $rec_dir/$name.mp4
